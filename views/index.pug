@@ -1,0 +1,61 @@
+p Hello from the boy
+
+if make
+  link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css')
+  h1 choose a make kid. your seed=#{seed}
+  div
+  form(action= '/attributes/make/' + seed method="post")
+      label(for='makeOpt') Make of the Vehicle
+      select(name='dropDown', id='')
+          each element in make
+              option= element
+          input(type='submit', value='Continue') 
+
+if model
+  link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css')
+  h1 choose a model kid
+  div
+  form(action='/attributes/model/' + seed method="post")
+      label(for='makeOpt') Model of the Vehicle
+      select(name='dropDown', id='')
+          each element in model
+              option= element
+          input(type='submit', value='Continue')
+
+if odometer
+    link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css')
+    h1 how many kilos she got my brother
+    div
+    form(action='/attributes/odo/' + seed method="post")
+      label(for='makeOpt') Odometer Reading
+      select(name='dropDown', id='')
+          each element in odometer
+              option= element
+          input(type='submit', value='Continue')
+
+if cond
+    link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css')
+    h1 how she looking?
+    div
+    form(action='/attributes/cond/' + seed method="post")
+      label(for='makeOpt') Condition
+      select(name='dropDown', id='')
+          each element in cond
+              option= element
+          input(type='submit', value='Continue')
+
+if year
+    link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css')
+    h1 choose a year my boy
+    div
+    form(action='/attributes/year/' + seed method="post")
+      label(for='makeOpt') Year of Production
+      select(name='dropDown', id='')
+          each element in year
+              option= element
+          input(type='submit', value='Continue')
+
+
+script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js')
+script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js')
+script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js')
