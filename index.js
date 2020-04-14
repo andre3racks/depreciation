@@ -70,7 +70,6 @@ app.post("/attributes/:attribute/:seed", (req, res) => {
 
     else    {
         const selected_cond = conditions.indexOf(selection);
-        console.log(selected_cond)
         const seed = req.params.seed;
         
         // dictionary requires re update for number conversion
@@ -79,7 +78,6 @@ app.post("/attributes/:attribute/:seed", (req, res) => {
         const encoded = encode_selections(seed);
 
         if(validate_encodings(encoded["make"], encoded["model"]))   {
-            py_talk();
             res.render("graph", { selections: data_dictionary[seed] });
         }
         else    {
