@@ -7,6 +7,7 @@
 const express = require("express");
 const path = require("path");
 const bodyparser = require('body-parser');
+const socket = require('socket.io');
 
 /**
  * App Variables
@@ -16,6 +17,24 @@ const app = express();
 const port = process.env.PORT || "8000";
 
 /**
+ * Server Activation
+ */
+
+var server = app.listen(port, () => {
+    console.log(`Listening to requests on http://localhost:${port}`);
+});
+
+/**
+ * Socket config
+ */
+
+var io = socket(server);
+
+io.on('connection', function(socket)    {
+    console.log("socket connected. Id: ", socket.id)
+})
+
+/**
  *  App Configuration
  */
 
@@ -23,6 +42,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyparser.urlencoded({ extended: true }));
+app.use(express.static('public'))
 /**
  * Routes Definitions
  */
@@ -31,24 +51,18 @@ app.get("/", async (req, res) => {
 
     read_local_JSON("model_mappings.json")
     .then((data) =>   {
-
         model_mapping = data
         // console.log(data)
-
     })
     .catch((err) =>     {
-
         console.log(err)
     })
-
-    // model_mapping = JSON.parse(raw_mapping)
-    // console.log( read_local_JSON("/mappings/model_mappings.json"))
 
     res.render("index", { make: make_list, seed: random_seed() });
 });
 
 // field all vehicle attribute selections
-app.post("/attributes/:attribute/:seed", (req, res) => {
+app.post("/attributes/:attribute/:seed", async (req, res) => {
 
     const selection = req.body.dropDown;
     var seed = req.params.seed;
@@ -77,7 +91,17 @@ app.post("/attributes/:attribute/:seed", (req, res) => {
 
         const encoded = encode_selections(seed);
 
-        if(validate_encodings(encoded["make"], encoded["model"]))   {
+        if(validate_encodings(encoded["make"], encoded["model"]))   {    
+            
+            NN_simulator(data_dictionary[seed])
+            .then((data) => {
+                console.log("NN simulator finished.")
+            })     
+            .catch((err) => {
+
+                console.log(err)
+            })   
+
             res.render("graph", { selections: data_dictionary[seed] });
         }
         else    {
@@ -85,15 +109,6 @@ app.post("/attributes/:attribute/:seed", (req, res) => {
         }
     }
 });
-
-/**
- * Server Activation
- */
-
-app.listen(port, () => {
-    console.log(`Listening to requests on http://localhost:${port}`);
-});
-
 
 /**
  * Variables to pass
@@ -118,7 +133,6 @@ var odo_list = range(400, 0).map(function(x) { return x * 1000; }).reverse();
  */
 
  var data_dictionary = {};
-
 
 /**
  * Helper Functions
@@ -146,11 +160,10 @@ function encode_selections(seed)    {
     encoded = {}
     encoded["make"] = "manufacturer_" + data_dictionary[seed]["make"];
     encoded["model"] = "model_" + data_dictionary[seed]["model"];
-    encoded["year"] = Math.abs(data_dictionary[seed]["year"] - 2020) / age_max 
-    encoded["odo"] = data_dictionary[seed]["odo"] / odo_max;
-    encoded["cond"] = data_dictionary[seed]["cond"] / condition_max;
+    encoded["year"] = Math.abs(data_dictionary[seed]["year"] - 2020) 
+    encoded["odo"] = data_dictionary[seed]["odo"]
+    encoded["cond"] = data_dictionary[seed]["cond"]
 
-    console.log(encoded);
     return encoded;
 }
 
@@ -190,6 +203,45 @@ async function read_local_JSON(path)  {
         py.stdin.end();
     })   
     
+}
+
+async function NN_simulator(attribute_dictionary)   {
+
+    return new Promise((resolve, reject) =>    {
+
+        var spawn = require('child_process').spawn,
+        py = spawn('python', ['NN_simulator.py']),
+        arg = attribute_dictionary,
+        dataString = "";
+
+        py.stdout.on('data', function(data){
+            
+            try {
+                console.log("data from NN, pre-processing: ", data.toString('utf8'))
+                const new_data = JSON.parse(data.toString())
+                console.log("data from NN: ", new_data)
+                io.sockets.emit('new_data', new_data)
+
+            }
+            catch(e)    {
+                console.log("failure parsing json from NN.")
+            }
+        });
+
+        py.stdout.on('end', function(){
+            
+            if(!dataString.localeCompare("failure."))
+            // console.log("in spawn; results: ", results)
+                resolve(dataString)
+            else
+                reject(dataString);
+            
+        });
+        
+        py.stdin.write(JSON.stringify(arg))
+        py.stdin.end();
+    })   
+
 }
 
 /**
