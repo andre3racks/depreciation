@@ -4,7 +4,7 @@ header
 
 if make
   link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css')
-  h1 choose a make kid. your seed=#{seed}
+  h1 Select your vehicle's make.
   div
   form(action= '/attributes/make/' + seed method="post")
       label(for='makeOpt') Make of the Vehicle
@@ -15,7 +15,7 @@ if make
 
 if model
   link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css')
-  h1 choose a model kid
+  h1 Select your vehicle's model.
   div
   form(action='/attributes/model/' + seed method="post")
       label(for='makeOpt') Model of the Vehicle
@@ -26,7 +26,7 @@ if model
 
 if odometer
     link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css')
-    h1 how many kilos she got my brother
+    h1 How many kilometers on the odometer?
     div
     form(action='/attributes/odo/' + seed method="post")
       label(for='makeOpt') Odometer Reading
@@ -37,7 +37,7 @@ if odometer
 
 if cond
     link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css')
-    h1 how she looking?
+    h1 How is the condition?
     div
     form(action='/attributes/cond/' + seed method="post")
       label(for='makeOpt') Condition
@@ -48,7 +48,7 @@ if cond
 
 if year
     link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css')
-    h1 choose a year my boy
+    h1 Select your vehicle's year of production.
     div
     form(action='/attributes/year/' + seed method="post")
       label(for='makeOpt') Year of Production

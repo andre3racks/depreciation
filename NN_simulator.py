@@ -10,15 +10,19 @@ def main():
     #get our data as an array from read_in()
     # lines = read_in()
 
+    price_predictor = keras.models.load_model('dataset/price_prediction.hdf5')
+
+
+    d = {}
+
+    d['all'] = []
 
     for i in range(10):
-        time.sleep(1)
+        time.sleep(0.5)
         
-        d = {}
-        d['price'] = random.randint(400, 100000)
-        d['odo'] = random.randint(400, 100000)
-        d['age'] = random.randint(1, 30)
-        print(json.dumps(d))
+        d['all'].append([random.randint(400, 100000), random.randint(400, 100000), random.randint(1, 30)])
+
+    print(json.dumps(d))
         
         
 

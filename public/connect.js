@@ -6,6 +6,8 @@ var chart = document.getElementById("chart")
 
 // listen for incoming data
 socket.on('new_data', function(data)    {
+    console.log("recieved:" ,data)
+
     Plotly.extendTraces('chart', {
         z: data
       }, [0])
